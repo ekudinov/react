@@ -2,8 +2,10 @@ package examples
 
 import (
 	"honnef.co/go/js/xhr"
+	"myitcv.io/highlightjs"
 	r "myitcv.io/react"
 	"myitcv.io/react/examples/immtodoapp"
+	"myitcv.io/react/jsx"
 )
 
 // ImmExamplesDef is the definition of the ImmExamples component
@@ -57,35 +59,32 @@ func (p *ImmExamplesDef) GetInitialState() ImmExamplesState {
 
 // Render renders the ImmExamples component
 func (p *ImmExamplesDef) Render() r.Element {
-	toRender := []r.Element{
-		r.H3(nil, r.S("Reference")),
-		r.P(nil, r.S("This entire page is a React application. An outer "), r.Code(nil, r.S("ImmExamples")), r.S(" component contains a number of inner components.")),
-		r.P(nil,
-			r.S("For the source code, raising issues, questions etc, please see "),
-			r.A(
-				&r.AProps{
-					Href:   "https://github.com/myitcv/react/tree/master/examples",
-					Target: "_blank",
-				},
-				r.S("the Github repo"),
-			),
-			r.S("."),
-		),
-		r.P(nil,
-			r.S("Note the examples below show the GopherJS source code from "), r.Code(nil, r.S("master")),
-		),
+	dc := jsx.HTML(`
+		<h3>Using immutable data structures</h3>
 
+		<p>This page focuses on using <a href="https://myitcv.io/immutable"><code>myitcv.io/immutable</code></a>
+		(specifically <a href="https://github.com/myitcv/immutable/wiki/immutableGen"><code>immutableGen</code></a>) to
+		help make building components easier. The pattern of immutable data structures lends itself well to React's style
+		of composition.</p>
+
+		<p>For the source code, raising issues, questions etc, please see
+		<a href="https://github.com/myitcv/react/tree/master/examples" target="_blank">the Github repo</a>.</p>
+
+		<p>Note the examples below show the Go source code from <code>master</code>.</p>
+		`)
+
+	dc = append(dc,
 		p.renderExample(
 			exampleImmTodo,
-			r.Span(nil, r.S("An Application using "), r.Code(nil, r.S("myitcv.io/immutable"))),
+			r.Span(nil, r.S("A simple TODO app")),
 			r.P(nil, r.S("The immtodoapp.TodoApp component is a reimplementation of todoapp.TodoApp using immutable data structures.")),
 			"n/a",
 			immtodoapp.TodoApp(),
 		),
-	}
+	)
 
 	return r.Div(&r.DivProps{ClassName: "container"},
-		toRender...,
+		dc...,
 	)
 }
 
@@ -97,12 +96,12 @@ func (p *ImmExamplesDef) renderExample(key exampleKey, title, msg r.Element, jsx
 		goSrc = src.src()
 	}
 
-	var code r.Element
+	var code *r.DangerousInnerHTMLDef
 	switch v, _ := p.State().selectedTabs.Get(key); v {
 	case tabGo:
-		code = r.Pre(nil, r.S(goSrc))
+		code = r.DangerousInnerHTML(highlightjs.Highlight("go", goSrc, true).Value)
 	case tabJsx:
-		code = r.Pre(nil, r.S(jsxSrc))
+		code = r.DangerousInnerHTML(highlightjs.Highlight("javascript", jsxSrc, true).Value)
 	}
 
 	return r.Div(nil,
@@ -120,7 +119,12 @@ func (p *ImmExamplesDef) renderExample(key exampleKey, title, msg r.Element, jsx
 						),
 					),
 					r.Div(&r.DivProps{ClassName: "panel-body"},
-						r.Pre(nil, code),
+						r.Pre(&r.PreProps{
+							Style: &r.CSS{
+								MaxHeight: "400px",
+							},
+							DangerouslySetInnerHTML: code,
+						}),
 					),
 				),
 			),
@@ -141,11 +145,31 @@ func (p *ImmExamplesDef) buildExampleNavTab(key exampleKey, t tab, title string)
 	return r.Li(
 		lip,
 		r.A(
-			&r.AProps{Href: "#", OnClick: p.handleTabChange(key, t)},
+			&r.AProps{Href: "#", OnClick: immTabChange{p, key, t}},
 			r.S(title),
 		),
 	)
 
+}
+
+type immTabChange struct {
+	e   *ImmExamplesDef
+	key exampleKey
+	t   tab
+}
+
+func (tc immTabChange) OnClick(e *r.SyntheticMouseEvent) {
+	p := tc.e
+	key := tc.key
+	t := tc.t
+
+	cts := p.State().selectedTabs
+	newSt := p.State()
+
+	newSt.selectedTabs = cts.Set(key, t)
+	p.SetState(newSt)
+
+	e.PreventDefault()
 }
 
 func (p *ImmExamplesDef) handleTabChange(key exampleKey, t tab) func(*r.SyntheticMouseEvent) {

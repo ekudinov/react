@@ -29,9 +29,19 @@ type BasicHTMLElement struct {
 	Key       string `js:"key" react:"omitempty"`
 	ClassName string `js:"className"`
 	Role      string `js:"role"`
+	Style     *CSS   `js:"style"`
+	Title     string `js:"title"`
 
-	OnChange func(e *SyntheticEvent)      `js:"onChange"`
-	OnClick  func(e *SyntheticMouseEvent) `js:"onClick"`
+	OnChange `js:"onChange"`
+	OnClick  `js:"onClick"`
+	// mouse events
+	OnMouseOut   `js:"onMouseOut"`
+	OnMouseOver  `js:"onMouseOver"`
+	OnMouseDown  `js:"onMouseDown"`
+	OnMouseMove  `js:"onMouseMove"`
+	OnMouseUp    `js:"onMouseUp"`
+	OnMouseEnter `js:"onMouseEnter"`
+	OnMouseLeave `js:"onMouseLeave"`
 
 	DangerouslySetInnerHTML *DangerousInnerHTMLDef `js:"dangerouslySetInnerHTML"`
 }
@@ -58,4 +68,6 @@ type SyntheticMouseEvent struct {
 	*SyntheticEvent
 
 	ClientX int `js:"clientX"`
+	PageX   int `js:"pageX"`
+	PageY   int `js:"pageY"`
 }

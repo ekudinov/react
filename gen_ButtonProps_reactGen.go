@@ -4,17 +4,32 @@ package react
 
 // ButtonProps defines the properties for the <button> element
 type ButtonProps struct {
+	ClassName               string
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
-	Type                    string
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Role  string
+	Style *CSS
+	Title string
+	Type  string
 }
 
 func (b *ButtonProps) assign(v *_ButtonProps) {
+
+	v.ClassName = b.ClassName
+
+	v.DangerouslySetInnerHTML = b.DangerouslySetInnerHTML
 
 	if b.ID != "" {
 		v.ID = b.ID
@@ -24,15 +39,49 @@ func (b *ButtonProps) assign(v *_ButtonProps) {
 		v.Key = b.Key
 	}
 
-	v.ClassName = b.ClassName
+	if b.OnChange != nil {
+		v.o.Set("onChange", b.OnChange.OnChange)
+	}
+
+	if b.OnClick != nil {
+		v.o.Set("onClick", b.OnClick.OnClick)
+	}
+
+	if b.OnMouseDown != nil {
+		v.o.Set("onMouseDown", b.OnMouseDown.OnMouseDown)
+	}
+
+	if b.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", b.OnMouseEnter.OnMouseEnter)
+	}
+
+	if b.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", b.OnMouseLeave.OnMouseLeave)
+	}
+
+	if b.OnMouseMove != nil {
+		v.o.Set("onMouseMove", b.OnMouseMove.OnMouseMove)
+	}
+
+	if b.OnMouseOut != nil {
+		v.o.Set("onMouseOut", b.OnMouseOut.OnMouseOut)
+	}
+
+	if b.OnMouseOver != nil {
+		v.o.Set("onMouseOver", b.OnMouseOver.OnMouseOver)
+	}
+
+	if b.OnMouseUp != nil {
+		v.o.Set("onMouseUp", b.OnMouseUp.OnMouseUp)
+	}
 
 	v.Role = b.Role
 
-	v.OnChange = b.OnChange
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = b.Style.hack()
 
-	v.OnClick = b.OnClick
-
-	v.DangerouslySetInnerHTML = b.DangerouslySetInnerHTML
+	v.Title = b.Title
 
 	v.Type = b.Type
 

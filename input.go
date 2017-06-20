@@ -18,6 +18,11 @@ type _InputProps struct {
 	Type         string `js:"type"`
 	Value        string `js:"value"`
 	DefaultValue string `js:"defaultValue" react:"omitempty"`
+	// for range type of input
+	Max  string `js:"max"`
+	Min  string `js:"min"`
+	Step string `js:"step"`
+	Size string `js:"size"`
 }
 
 func (d *InputDef) reactElement() {}

@@ -4,16 +4,31 @@ package react
 
 // PreProps defines the properties for the <pre> element
 type PreProps struct {
+	ClassName               string
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Role  string
+	Style *CSS
+	Title string
 }
 
 func (p *PreProps) assign(v *_PreProps) {
+
+	v.ClassName = p.ClassName
+
+	v.DangerouslySetInnerHTML = p.DangerouslySetInnerHTML
 
 	if p.ID != "" {
 		v.ID = p.ID
@@ -23,14 +38,48 @@ func (p *PreProps) assign(v *_PreProps) {
 		v.Key = p.Key
 	}
 
-	v.ClassName = p.ClassName
+	if p.OnChange != nil {
+		v.o.Set("onChange", p.OnChange.OnChange)
+	}
+
+	if p.OnClick != nil {
+		v.o.Set("onClick", p.OnClick.OnClick)
+	}
+
+	if p.OnMouseDown != nil {
+		v.o.Set("onMouseDown", p.OnMouseDown.OnMouseDown)
+	}
+
+	if p.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", p.OnMouseEnter.OnMouseEnter)
+	}
+
+	if p.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", p.OnMouseLeave.OnMouseLeave)
+	}
+
+	if p.OnMouseMove != nil {
+		v.o.Set("onMouseMove", p.OnMouseMove.OnMouseMove)
+	}
+
+	if p.OnMouseOut != nil {
+		v.o.Set("onMouseOut", p.OnMouseOut.OnMouseOut)
+	}
+
+	if p.OnMouseOver != nil {
+		v.o.Set("onMouseOver", p.OnMouseOver.OnMouseOver)
+	}
+
+	if p.OnMouseUp != nil {
+		v.o.Set("onMouseUp", p.OnMouseUp.OnMouseUp)
+	}
 
 	v.Role = p.Role
 
-	v.OnChange = p.OnChange
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = p.Style.hack()
 
-	v.OnClick = p.OnClick
-
-	v.DangerouslySetInnerHTML = p.DangerouslySetInnerHTML
+	v.Title = p.Title
 
 }

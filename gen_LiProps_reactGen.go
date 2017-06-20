@@ -4,16 +4,31 @@ package react
 
 // LiProps defines the properties for the <li> element
 type LiProps struct {
+	ClassName               string
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Role  string
+	Style *CSS
+	Title string
 }
 
 func (l *LiProps) assign(v *_LiProps) {
+
+	v.ClassName = l.ClassName
+
+	v.DangerouslySetInnerHTML = l.DangerouslySetInnerHTML
 
 	if l.ID != "" {
 		v.ID = l.ID
@@ -23,14 +38,48 @@ func (l *LiProps) assign(v *_LiProps) {
 		v.Key = l.Key
 	}
 
-	v.ClassName = l.ClassName
+	if l.OnChange != nil {
+		v.o.Set("onChange", l.OnChange.OnChange)
+	}
+
+	if l.OnClick != nil {
+		v.o.Set("onClick", l.OnClick.OnClick)
+	}
+
+	if l.OnMouseDown != nil {
+		v.o.Set("onMouseDown", l.OnMouseDown.OnMouseDown)
+	}
+
+	if l.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", l.OnMouseEnter.OnMouseEnter)
+	}
+
+	if l.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", l.OnMouseLeave.OnMouseLeave)
+	}
+
+	if l.OnMouseMove != nil {
+		v.o.Set("onMouseMove", l.OnMouseMove.OnMouseMove)
+	}
+
+	if l.OnMouseOut != nil {
+		v.o.Set("onMouseOut", l.OnMouseOut.OnMouseOut)
+	}
+
+	if l.OnMouseOver != nil {
+		v.o.Set("onMouseOver", l.OnMouseOver.OnMouseOver)
+	}
+
+	if l.OnMouseUp != nil {
+		v.o.Set("onMouseUp", l.OnMouseUp.OnMouseUp)
+	}
 
 	v.Role = l.Role
 
-	v.OnChange = l.OnChange
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = l.Style.hack()
 
-	v.OnClick = l.OnClick
-
-	v.DangerouslySetInnerHTML = l.DangerouslySetInnerHTML
+	v.Title = l.Title
 
 }

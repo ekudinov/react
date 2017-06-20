@@ -4,16 +4,31 @@ package react
 
 // SpanProps defines the properties for the <p> element
 type SpanProps struct {
+	ClassName               string
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Role  string
+	Style *CSS
+	Title string
 }
 
 func (s *SpanProps) assign(v *_SpanProps) {
+
+	v.ClassName = s.ClassName
+
+	v.DangerouslySetInnerHTML = s.DangerouslySetInnerHTML
 
 	if s.ID != "" {
 		v.ID = s.ID
@@ -23,14 +38,48 @@ func (s *SpanProps) assign(v *_SpanProps) {
 		v.Key = s.Key
 	}
 
-	v.ClassName = s.ClassName
+	if s.OnChange != nil {
+		v.o.Set("onChange", s.OnChange.OnChange)
+	}
+
+	if s.OnClick != nil {
+		v.o.Set("onClick", s.OnClick.OnClick)
+	}
+
+	if s.OnMouseDown != nil {
+		v.o.Set("onMouseDown", s.OnMouseDown.OnMouseDown)
+	}
+
+	if s.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", s.OnMouseEnter.OnMouseEnter)
+	}
+
+	if s.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", s.OnMouseLeave.OnMouseLeave)
+	}
+
+	if s.OnMouseMove != nil {
+		v.o.Set("onMouseMove", s.OnMouseMove.OnMouseMove)
+	}
+
+	if s.OnMouseOut != nil {
+		v.o.Set("onMouseOut", s.OnMouseOut.OnMouseOut)
+	}
+
+	if s.OnMouseOver != nil {
+		v.o.Set("onMouseOver", s.OnMouseOver.OnMouseOver)
+	}
+
+	if s.OnMouseUp != nil {
+		v.o.Set("onMouseUp", s.OnMouseUp.OnMouseUp)
+	}
 
 	v.Role = s.Role
 
-	v.OnChange = s.OnChange
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = s.Style.hack()
 
-	v.OnClick = s.OnClick
-
-	v.DangerouslySetInnerHTML = s.DangerouslySetInnerHTML
+	v.Title = s.Title
 
 }

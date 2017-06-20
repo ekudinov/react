@@ -1,6 +1,3 @@
-// Copyright (c) 2016 Paul Jolly <paul@myitcv.org.uk>, all rights reserved.
-// Use of this document is governed by a license found in the LICENSE document.
-
 package markdowneditor // import "myitcv.io/react/examples/markdowneditor"
 
 import (
@@ -48,7 +45,7 @@ func (m *MarkdownEditorDef) Render() r.Element {
 			&r.TextAreaProps{
 				ClassName: "form-control",
 				Value:     m.State().value,
-				OnChange:  m.handleChange,
+				OnChange:  inputChange{m},
 			},
 		),
 		r.H3(nil, r.S("Output")),
@@ -61,14 +58,16 @@ func (m *MarkdownEditorDef) Render() r.Element {
 	)
 }
 
-func (m *MarkdownEditorDef) handleChange(se *r.SyntheticEvent) {
-	target := se.Target().(*dom.HTMLTextAreaElement)
-
-	m.SetState(MarkdownEditorState{value: target.Value})
-}
-
 func (m *MarkdownEditorDef) getRawMarkup() *r.DangerousInnerHTMLDef {
 	rem := m.remark.Render(m.State().value)
 
 	return r.DangerousInnerHTML(rem)
+}
+
+type inputChange struct{ m *MarkdownEditorDef }
+
+func (i inputChange) OnChange(se *r.SyntheticEvent) {
+	target := se.Target().(*dom.HTMLTextAreaElement)
+
+	i.m.SetState(MarkdownEditorState{value: target.Value})
 }

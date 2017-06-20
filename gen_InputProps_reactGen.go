@@ -4,20 +4,43 @@ package react
 
 // InputProps defines the properties for the <input> element
 type InputProps struct {
+	ClassName               string
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
+	DefaultValue            string
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
-	Placeholder             string
-	Type                    string
-	Value                   string
-	DefaultValue            string
+	Max                     string
+	Min                     string
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Placeholder string
+	Role        string
+	Size        string
+	Step        string
+	Style       *CSS
+	Title       string
+	Type        string
+	Value       string
 }
 
 func (i *InputProps) assign(v *_InputProps) {
+
+	v.ClassName = i.ClassName
+
+	v.DangerouslySetInnerHTML = i.DangerouslySetInnerHTML
+
+	if i.DefaultValue != "" {
+		v.DefaultValue = i.DefaultValue
+	}
 
 	if i.ID != "" {
 		v.ID = i.ID
@@ -27,24 +50,62 @@ func (i *InputProps) assign(v *_InputProps) {
 		v.Key = i.Key
 	}
 
-	v.ClassName = i.ClassName
+	v.Max = i.Max
+
+	v.Min = i.Min
+
+	if i.OnChange != nil {
+		v.o.Set("onChange", i.OnChange.OnChange)
+	}
+
+	if i.OnClick != nil {
+		v.o.Set("onClick", i.OnClick.OnClick)
+	}
+
+	if i.OnMouseDown != nil {
+		v.o.Set("onMouseDown", i.OnMouseDown.OnMouseDown)
+	}
+
+	if i.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", i.OnMouseEnter.OnMouseEnter)
+	}
+
+	if i.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", i.OnMouseLeave.OnMouseLeave)
+	}
+
+	if i.OnMouseMove != nil {
+		v.o.Set("onMouseMove", i.OnMouseMove.OnMouseMove)
+	}
+
+	if i.OnMouseOut != nil {
+		v.o.Set("onMouseOut", i.OnMouseOut.OnMouseOut)
+	}
+
+	if i.OnMouseOver != nil {
+		v.o.Set("onMouseOver", i.OnMouseOver.OnMouseOver)
+	}
+
+	if i.OnMouseUp != nil {
+		v.o.Set("onMouseUp", i.OnMouseUp.OnMouseUp)
+	}
+
+	v.Placeholder = i.Placeholder
 
 	v.Role = i.Role
 
-	v.OnChange = i.OnChange
+	v.Size = i.Size
 
-	v.OnClick = i.OnClick
+	v.Step = i.Step
 
-	v.DangerouslySetInnerHTML = i.DangerouslySetInnerHTML
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = i.Style.hack()
 
-	v.Placeholder = i.Placeholder
+	v.Title = i.Title
 
 	v.Type = i.Type
 
 	v.Value = i.Value
-
-	if i.DefaultValue != "" {
-		v.DefaultValue = i.DefaultValue
-	}
 
 }

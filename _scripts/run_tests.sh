@@ -29,11 +29,34 @@ rm -f !(_vendor)/**/gen_*.go
 
 go generate ./...
 
-go test ./...
+z=$(goimports -l !(_vendor)/**/!(gen_*).go !(gen_*).go)
+if [ ! -z "$z" ]
+then
+	echo "The following files are not formatted:"
+	echo ""
+	echo "$z"
+	exit 1
+fi
 
+z=$(gofmt -l !(_vendor)/**/gen_*.go gen_*.go)
+
+if [ ! -z "$z" ]
+then
+	echo "The following generated files are not formatted:"
+	echo ""
+	echo "$z"
+	exit 1
+fi
+
+# we need to install first so the go/types-based reactVet tests
+# can import the myitcv.io/react/jsx package
 go install ./...
 
+go test ./...
+
 go vet ./...
+
+reactVet ./...
 
 immutableVet ./...
 

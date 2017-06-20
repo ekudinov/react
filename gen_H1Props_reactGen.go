@@ -4,16 +4,31 @@ package react
 
 // H1Props defines the properties for the <h1> element
 type H1Props struct {
+	ClassName               string
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Role  string
+	Style *CSS
+	Title string
 }
 
 func (h *H1Props) assign(v *_H1Props) {
+
+	v.ClassName = h.ClassName
+
+	v.DangerouslySetInnerHTML = h.DangerouslySetInnerHTML
 
 	if h.ID != "" {
 		v.ID = h.ID
@@ -23,14 +38,48 @@ func (h *H1Props) assign(v *_H1Props) {
 		v.Key = h.Key
 	}
 
-	v.ClassName = h.ClassName
+	if h.OnChange != nil {
+		v.o.Set("onChange", h.OnChange.OnChange)
+	}
+
+	if h.OnClick != nil {
+		v.o.Set("onClick", h.OnClick.OnClick)
+	}
+
+	if h.OnMouseDown != nil {
+		v.o.Set("onMouseDown", h.OnMouseDown.OnMouseDown)
+	}
+
+	if h.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", h.OnMouseEnter.OnMouseEnter)
+	}
+
+	if h.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", h.OnMouseLeave.OnMouseLeave)
+	}
+
+	if h.OnMouseMove != nil {
+		v.o.Set("onMouseMove", h.OnMouseMove.OnMouseMove)
+	}
+
+	if h.OnMouseOut != nil {
+		v.o.Set("onMouseOut", h.OnMouseOut.OnMouseOut)
+	}
+
+	if h.OnMouseOver != nil {
+		v.o.Set("onMouseOver", h.OnMouseOver.OnMouseOver)
+	}
+
+	if h.OnMouseUp != nil {
+		v.o.Set("onMouseUp", h.OnMouseUp.OnMouseUp)
+	}
 
 	v.Role = h.Role
 
-	v.OnChange = h.OnChange
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = h.Style.hack()
 
-	v.OnClick = h.OnClick
-
-	v.DangerouslySetInnerHTML = h.DangerouslySetInnerHTML
+	v.Title = h.Title
 
 }

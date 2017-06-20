@@ -5,11 +5,13 @@ package examples // import "myitcv.io/react/examples"
 
 import (
 	"honnef.co/go/js/xhr"
+	"myitcv.io/highlightjs"
 	r "myitcv.io/react"
 	"myitcv.io/react/examples/hellomessage"
 	"myitcv.io/react/examples/markdowneditor"
 	"myitcv.io/react/examples/timer"
 	"myitcv.io/react/examples/todoapp"
+	"myitcv.io/react/jsx"
 )
 
 //go:generate reactGen
@@ -77,21 +79,19 @@ func (p *ExamplesDef) GetInitialState() ExamplesState {
 
 // Render renders the Examples component
 func (p *ExamplesDef) Render() r.Element {
-	toRender := []r.Element{
-		r.H3(nil, r.S("Reference")),
-		r.P(nil, r.S("This entire page is a React application. An outer "), r.Code(nil, r.S("Examples")), r.S(" component contains a number of inner components.")),
-		r.P(nil,
-			r.S("For the source code, raising issues, questions etc, please see "),
-			r.A(&r.AProps{
-				Href:   "https://github.com/myitcv/react/tree/master/examples",
-				Target: "_blank",
-			}, r.S("the Github repo")),
-			r.S("."),
-		),
-		r.P(nil,
-			r.S("Note the examples below show the GopherJS source code from "), r.Code(nil, r.S("master")),
-		),
+	dc := jsx.HTML(`
+		<h3>Introduction</h3>
 
+		<p>This entire page is a React application. An outer <code>Examples</code> component
+		contains a number of inner components.</p>
+
+		<p>For the source code, raising issues, questions etc, please see
+		<a href="https://github.com/myitcv/react/tree/master/examples" target="_blank">the Github repo</a>.</p>
+
+		<p>Note the examples below show the Go source code from <code>master</code>.</p>
+		`)
+
+	dc = append(dc,
 		p.renderExample(
 			exampleHello,
 			r.S("A Simple Example"),
@@ -130,11 +130,24 @@ func (p *ExamplesDef) Render() r.Element {
 			markdownEditorJsx,
 			markdowneditor.MarkdownEditor(),
 		),
-	}
 
-	return r.Div(
-		&r.DivProps{ClassName: "container"},
-		toRender...,
+		r.HR(nil),
+
+		p.renderExample(
+			exampleLatency,
+			r.S("Latency Checker"),
+			r.P(nil,
+				r.S("By kind permission of "), r.A(&r.AProps{Href: "http://tjholowaychuk.com/"}, r.S("TJ Holowaychuk")),
+				r.S(", a basic, component-based version of the beautiful APEX "), r.A(&r.AProps{Href: "https://latency.apex.sh/"}, r.S("Latency Tool")),
+				r.S(" that uses randomly generated latency values."),
+			),
+			latencyJsx,
+			r.A(&r.AProps{Href: "../latency", Target: "_blank"}, r.S("Launch in new tab")),
+		),
+	)
+
+	return r.Div(&r.DivProps{ClassName: "container"},
+		dc...,
 	)
 }
 
@@ -146,12 +159,12 @@ func (p *ExamplesDef) renderExample(key exampleKey, title, msg r.Element, jsxSrc
 		goSrc = src.src()
 	}
 
-	var code r.Element
+	var code *r.DangerousInnerHTMLDef
 	switch v, _ := p.State().selectedTabs.Get(key); v {
 	case tabGo:
-		code = r.Pre(nil, r.S(goSrc))
+		code = r.DangerousInnerHTML(highlightjs.Highlight("go", goSrc, true).Value)
 	case tabJsx:
-		code = r.Pre(nil, r.S(jsxSrc))
+		code = r.DangerousInnerHTML(highlightjs.Highlight("javascript", jsxSrc, true).Value)
 	}
 
 	return r.Div(nil,
@@ -169,7 +182,12 @@ func (p *ExamplesDef) renderExample(key exampleKey, title, msg r.Element, jsxSrc
 						),
 					),
 					r.Div(&r.DivProps{ClassName: "panel-body"},
-						r.Pre(nil, code),
+						r.Pre(&r.PreProps{
+							Style: &r.CSS{
+								MaxHeight: "400px",
+							},
+							DangerouslySetInnerHTML: code,
+						}),
 					),
 				),
 			),
@@ -190,23 +208,31 @@ func (p *ExamplesDef) buildExampleNavTab(key exampleKey, t tab, title string) *r
 	return r.Li(
 		lip,
 		r.A(
-			&r.AProps{Href: "#", OnClick: p.handleTabChange(key, t)},
+			&r.AProps{Href: "#", OnClick: tabChange{p, key, t}},
 			r.S(title),
 		),
 	)
 
 }
 
-func (p *ExamplesDef) handleTabChange(key exampleKey, t tab) func(*r.SyntheticMouseEvent) {
-	return func(e *r.SyntheticMouseEvent) {
-		cts := p.State().selectedTabs
-		newSt := p.State()
+type tabChange struct {
+	e   *ExamplesDef
+	key exampleKey
+	t   tab
+}
 
-		newSt.selectedTabs = cts.Set(key, t)
-		p.SetState(newSt)
+func (tc tabChange) OnClick(e *r.SyntheticMouseEvent) {
+	p := tc.e
+	key := tc.key
+	t := tc.t
 
-		e.PreventDefault()
-	}
+	cts := p.State().selectedTabs
+	newSt := p.State()
+
+	newSt.selectedTabs = cts.Set(key, t)
+	p.SetState(newSt)
+
+	e.PreventDefault()
 }
 
 func plainPanel(children ...r.Element) r.Element {

@@ -4,19 +4,42 @@ package react
 
 // TextAreaProps defines the properties for the <textarea> element
 type TextAreaProps struct {
+	ClassName               string
+	Cols                    uint
+	DangerouslySetInnerHTML *DangerousInnerHTMLDef
+	DefaultValue            string
 	ID                      string
 	Key                     string
-	ClassName               string
-	Role                    string
-	OnChange                func(e *SyntheticEvent)
-	OnClick                 func(e *SyntheticMouseEvent)
-	DangerouslySetInnerHTML *DangerousInnerHTMLDef
-	Placeholder             string
-	Value                   string
-	DefaultValue            string
+
+	OnChange
+	OnClick
+	OnMouseDown
+	OnMouseEnter
+	OnMouseLeave
+	OnMouseMove
+	OnMouseOut
+	OnMouseOver
+	OnMouseUp
+
+	Placeholder string
+	Role        string
+	Rows        uint
+	Style       *CSS
+	Title       string
+	Value       string
 }
 
 func (t *TextAreaProps) assign(v *_TextAreaProps) {
+
+	v.ClassName = t.ClassName
+
+	v.Cols = t.Cols
+
+	v.DangerouslySetInnerHTML = t.DangerouslySetInnerHTML
+
+	if t.DefaultValue != "" {
+		v.DefaultValue = t.DefaultValue
+	}
 
 	if t.ID != "" {
 		v.ID = t.ID
@@ -26,22 +49,54 @@ func (t *TextAreaProps) assign(v *_TextAreaProps) {
 		v.Key = t.Key
 	}
 
-	v.ClassName = t.ClassName
+	if t.OnChange != nil {
+		v.o.Set("onChange", t.OnChange.OnChange)
+	}
 
-	v.Role = t.Role
+	if t.OnClick != nil {
+		v.o.Set("onClick", t.OnClick.OnClick)
+	}
 
-	v.OnChange = t.OnChange
+	if t.OnMouseDown != nil {
+		v.o.Set("onMouseDown", t.OnMouseDown.OnMouseDown)
+	}
 
-	v.OnClick = t.OnClick
+	if t.OnMouseEnter != nil {
+		v.o.Set("onMouseEnter", t.OnMouseEnter.OnMouseEnter)
+	}
 
-	v.DangerouslySetInnerHTML = t.DangerouslySetInnerHTML
+	if t.OnMouseLeave != nil {
+		v.o.Set("onMouseLeave", t.OnMouseLeave.OnMouseLeave)
+	}
+
+	if t.OnMouseMove != nil {
+		v.o.Set("onMouseMove", t.OnMouseMove.OnMouseMove)
+	}
+
+	if t.OnMouseOut != nil {
+		v.o.Set("onMouseOut", t.OnMouseOut.OnMouseOut)
+	}
+
+	if t.OnMouseOver != nil {
+		v.o.Set("onMouseOver", t.OnMouseOver.OnMouseOver)
+	}
+
+	if t.OnMouseUp != nil {
+		v.o.Set("onMouseUp", t.OnMouseUp.OnMouseUp)
+	}
 
 	v.Placeholder = t.Placeholder
 
-	v.Value = t.Value
+	v.Role = t.Role
 
-	if t.DefaultValue != "" {
-		v.DefaultValue = t.DefaultValue
-	}
+	v.Rows = t.Rows
+
+	// TODO: until we have a resolution on
+	// https://github.com/gopherjs/gopherjs/issues/236
+	v.Style = t.Style.hack()
+
+	v.Title = t.Title
+
+	v.Value = t.Value
 
 }
